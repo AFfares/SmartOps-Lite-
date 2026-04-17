@@ -4,25 +4,41 @@ import { db } from "@/lib/db";
 import { demoOrganizations, demoProducts } from "@/lib/demo-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+type StoreOrg = { id: string; name: string; slug: string };
+type StoreProduct = {
+  id: string;
+  name: string;
+  description: string | null;
+  priceDzd: number;
+  organization: { name: string; slug: string };
+};
+
 export default async function StoreIndexPage() {
-  const [orgs, products] = await Promise.all([
-    db.organization.findMany({
-      orderBy: { name: "asc" },
-      select: { id: true, name: true, slug: true },
-    }),
-    db.product.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { updatedAt: "desc" },
-      take: 12,
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        priceDzd: true,
-        organization: { select: { name: true, slug: true } },
-      },
-    }),
-  ]);
+  let orgs: StoreOrg[] = [];
+  let products: StoreProduct[] = [];
+  try {
+    [orgs, products] = await Promise.all([
+      db.organization.findMany({
+        orderBy: { name: "asc" },
+        select: { id: true, name: true, slug: true },
+      }),
+      db.product.findMany({
+        where: { status: "PUBLISHED" },
+        orderBy: { updatedAt: "desc" },
+        take: 12,
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          priceDzd: true,
+          organization: { select: { name: true, slug: true } },
+        },
+      }),
+    ]);
+  } catch {
+    orgs = [];
+    products = [];
+  }
 
   const orgsToShow = orgs.length > 0 ? orgs : demoOrganizations;
   const productsToShow = products.length > 0
