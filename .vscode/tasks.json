@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev: Next.js",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev"],
+      "isBackground": true,
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build: Next.js",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: Up (Docker)",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "db:up"],
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: Push",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "db:push"],
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: Seed",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "db:seed"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Prisma: Generate",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "prisma:generate"],
+      "problemMatcher": []
+    }
+  ]
+}

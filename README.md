@@ -1,41 +1,105 @@
-<<<<<<< HEAD
-# SmartOps-Lite-
-SmartOps-Lite is a modern industrial management platform built with Next.js and PostgreSQL. It features an AI-powered assistant (Gemini 2.0) to help engineers manage technical assets, 3D printing components, and industrial workflows through a high-performance, dark-themed interface.
-=======
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SmartOps Lite
 
-## Getting Started
+Full-stack multi-tenant SaaS starter for industrial SMEs (ERP/CRM/HR/Production/Inventory + Storefront + AI).
 
-First, run the development server:
+## Requirements
+
+- Node.js + npm
+- Docker Desktop (for local PostgreSQL)
+
+## Setup (local)
+
+1. Create env file:
+
+```bash
+copy .env.example .env
+```
+
+2. Start PostgreSQL:
+
+```bash
+npm run db:up
+```
+
+3. Create tables and seed demo data:
+
+```bash
+npm run db:push
+npm run db:seed
+```
+
+Reset + reseed (useful for demo mode):
+
+```bash
+npm run db:reset
+```
+
+If you prefer a migration-based workflow, first create migrations with:
+
+```bash
+npm run db:migrate -- --name init
+```
+
+Then you can reset via:
+
+```bash
+npm run db:migrate:reset
+npm run db:seed
+```
+
+4. Run the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Demo users (after seeding)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Password for all demo users: `Admin123!`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Admin: `admin@smartops-lite.com`
+- Employee: `employee1@smartops-lite.com`
+- Customer: `customer1@smartops-lite.com`
 
-## Learn More
+## Portals
 
-To learn more about Next.js, take a look at the following resources:
+- Admin: `/admin/overview`
+- Employee: `/employee/dashboard`
+- Customer: `/customer/dashboard`
+- Store index: `/store`
+- Store (SmartOps Lite): `/store/smartops-lite`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Cloudinary uploads (admin catalog)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Set these in `.env`:
 
-## Deploy on Vercel
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Then open `/admin/catalog` and use **Add image / Set manual / Set video**.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
->>>>>>> d09dca5 (Initial commit from Create Next App)
+## AI
+
+Set one of these in `.env` to enable the assistant endpoints:
+
+- `OPENROUTER_API_KEY` (preferred; supports Gemini/Claude/etc)
+- or `OPENAI_API_KEY`
+
+If both are set, the app will prefer OpenRouter.
+
+## Quality checks
+
+```bash
+npm run lint
+npm run build
+```
+
+## Troubleshooting
+
+### Prisma enum mismatch (TaskStatus)
+
+If you see: `invalid input value for enum "TaskStatus": "TODO"`, your database enum is out of sync (often after changing enum values in `prisma/schema.prisma` without resetting/migrating the DB).
+
+- Dev (data loss): `npm run db:reset`
+- Keep data: run the SQL in `prisma/sql/fix_taskstatus_enum.sql` against your database, then rerun `npm run db:seed`.
